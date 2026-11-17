@@ -36,6 +36,19 @@ telaremota conectar <nome> -diag 5s
 
 Ao contribuir, você concorda que sua contribuição seja distribuída sob a [licença do projeto](LICENSE).
 
+## Publicar uma versão (mantenedores)
+
+1. Atualize o [CHANGELOG.md](CHANGELOG.md): mova os itens de **[Não publicado]** para uma seção `## [X.Y.Z] - AAAA-MM-DD` (versionamento semântico: correção = Z, função nova = Y, quebra de compatibilidade = X).
+2. Opcional: teste os pacotes localmente com `bash scripts/release.sh vX.Y.Z` (saída em `dist/release/`).
+3. Crie e envie a tag:
+
+   ```bash
+   git tag -a vX.Y.Z -m "TelaRemota X.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+O workflow [release.yml](.github/workflows/release.yml) roda os testes, compila Windows (amd64) e o ponto fixo Linux (amd64/arm64) com a versão embutida, inclui `LICENSE`, `README.md` e as licenças das bibliotecas (`THIRD_PARTY_LICENSES.txt`) em cada pacote, gera `SHA256SUMS.txt` e publica o Release com as notas do CHANGELOG. Tags com sufixo (ex.: `v0.6.0-beta.1`) saem como pré-lançamento.
+
 ## Segurança
 
 **Não abra issue pública para vulnerabilidades.** Use o recurso *Report a vulnerability* (aviso de segurança privado) da página do repositório, com passos para reproduzir. Responderemos assim que possível.

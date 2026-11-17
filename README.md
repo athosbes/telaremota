@@ -11,7 +11,7 @@ Acesso remoto leve, no estilo AnyDesk/TeamViewer, mas **direto entre os seus com
 
 ## Como funciona (em uma frase)
 
-Um computador alcançável vira o **ponto fixo**; os outros se pareiam a ele uma vez e mantêm uma conexão de saída (que passa por CGNAT). A partir daí, qualquer computador pareado controla qualquer outro, nos dois sentidos.
+Um computador alcançável vira o **ponto fixo**; os outros se pareiam a ele uma vez e mantêm uma conexão de saída (que passa por CGNAT). A partir daí, qualquer computador pareado controla qualquer outro que permita acesso — nos dois sentidos, ou num só (modo técnico: [docs/tailscale.md](docs/tailscale.md#técnico-só-controlar-mão-única)).
 
 ```
  CASA (atrás de CGNAT)                         EMPRESA (ponto fixo)
@@ -22,10 +22,17 @@ Um computador alcançável vira o **ponto fixo**; os outros se pareiam a ele uma
 
 ## Baixar / compilar
 
-Precisa do **Go 1.27.4 ou mais novo** (https://go.dev/dl/).
+**Pronto para usar:** baixe a última versão em [Releases](https://github.com/athosbes/telaremota/releases/latest):
+
+- `telaremota-X.Y.Z-windows-amd64.zip`: Windows 10/11 (descompacte e dê duplo clique em `telaremota.exe`);
+- `telaremota-hub-X.Y.Z-linux-amd64.tar.gz` / `-arm64`: ponto fixo em servidor Linux (opcional).
+
+Confira a integridade com `SHA256SUMS.txt`. O executável não é assinado: se aparecer "O Windows protegeu o computador", clique em *Mais informações → Executar assim mesmo*.
+
+**Compilar:** precisa do **Go 1.27.4 ou mais novo** (https://go.dev/dl/).
 
 ```bash
-git clone <url-do-repositório> telaremota
+git clone https://github.com/athosbes/telaremota.git telaremota
 cd telaremota
 go build -trimpath -ldflags "-s -w" -o telaremota.exe ./cmd/telaremota
 ```
@@ -104,7 +111,14 @@ Encontrou uma falha de segurança? Veja [CONTRIBUTING.md](CONTRIBUTING.md#segura
 - [docs/oracle-cloud.md](docs/oracle-cloud.md) — ponto fixo em servidor Linux.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — como compilar, testar e contribuir.
 
+## Autor
+
+Criado e mantido por [athosbes](https://github.com/athosbes) (athosbes@outlook.com). Veja também [AUTHORS](AUTHORS) e o [histórico de versões](CHANGELOG.md).
+
 ## Licença
+
+Copyright (C) 2026 athosbes.
+
 
 [GNU AGPL-3.0](LICENSE). Você pode usar, estudar, modificar e redistribuir o TelaRemota. Quem distribuir uma versão modificada, ou oferecê-la a outras pessoas pela rede (por exemplo, um ponto fixo como serviço), precisa disponibilizar o código-fonte dessa versão sob a mesma licença.
 

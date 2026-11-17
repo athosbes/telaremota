@@ -3,9 +3,14 @@
 #   .\build.ps1 -Server https://...  -> também o modo navegador (servidor + agente legado)
 param(
     [string]$Server = "",
-    [string]$Version = "0.4.0"
+    # Versão embutida: por padrão a da tag do git (ex.: 0.5.0, ou 0.5.0-3-gabc123 entre versões)
+    [string]$Version = ""
 )
 $ErrorActionPreference = "Stop"
+if (-not $Version) {
+    $Version = (git describe --tags --always --dirty 2>$null) -replace '^v', ''
+    if (-not $Version) { $Version = "dev" }
+}
 New-Item -ItemType Directory -Force dist | Out-Null
 
 go build -trimpath -ldflags "-s -w -X main.version=$Version" -o dist/telaremota.exe ./cmd/telaremota

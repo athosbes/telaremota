@@ -1,9 +1,9 @@
 # Atalhos de compilação (alternativa ao build.ps1). Requer Go 1.27.4+ e make.
-VERSION ?= 0.4.0
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null | sed 's/^v//' || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 GO      ?= go
 
-.PHONY: all windows hub test vet clean
+.PHONY: all windows hub test vet clean release
 
 all: windows hub
 
@@ -19,6 +19,10 @@ vet:
 
 test:
 	$(GO) test ./...
+
+# Pacotes de uma versão em dist/release (ex.: make release TAG=v0.5.0)
+release:
+	bash scripts/release.sh $(TAG)
 
 clean:
 	rm -rf dist

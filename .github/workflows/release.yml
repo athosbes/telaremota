@@ -1,0 +1,65 @@
+name: Release
+
+# Publica uma versão ao enviar uma tag vX.Y.Z:
+#   git tag -a v0.5.0 -m "TelaRemota 0.5.0" && git push origin v0.5.0
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go vet ./...
+      - run: go test ./...
+
+  publicar:
+    needs: testes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # criar o Release e anexar os arquivos
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Montar pacotes
+        run: bash scripts/release.sh "$GITHUB_REF_NAME"
+
+      - name: Notas da versão (CHANGELOG.md)
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          awk -v v="$v" '
+            index($0, "## [" v "]") == 1 { on = 1; next }
+            on && index($0, "## [") == 1 { exit }
+            on { print }
+          ' CHANGELOG.md > notas.md
+          if [ ! -s notas.md ]; then
+            echo "::error::CHANGELOG.md não tem a seção ## [$v]"
+            exit 1
+          fi
+          cat >> notas.md <<'EOF'
+
+          ---
+          **Downloads:** `telaremota-*-windows-amd64.zip` para Windows 10/11 e `telaremota-hub-*-linux-*.tar.gz` para o ponto fixo em servidor Linux. Confira a integridade com `SHA256SUMS.txt`.
+          O executável não é assinado: se o Windows mostrar "O Windows protegeu o computador", clique em *Mais informações → Executar assim mesmo*.
+          EOF
+
+      - name: Criar o Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pre=""
+          case "$GITHUB_REF_NAME" in *-*) pre="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" dist/release/* \
+            --title "TelaRemota ${GITHUB_REF_NAME#v}" \
+            --notes-file notas.md \
+            --verify-tag $pre
