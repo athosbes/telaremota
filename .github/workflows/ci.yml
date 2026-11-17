@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: gofmt
+        shell: bash
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - run: go vet ./...
+      - run: go test ./...
+      - name: Compilar telaremota.exe
+        run: go build -trimpath -ldflags "-s -w" -o dist/telaremota.exe ./cmd/telaremota
+      - uses: actions/upload-artifact@v4
+        with:
+          name: telaremota-windows-amd64
+          path: dist/telaremota.exe
+
+  hub-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Compilar telaremota-hub
+        env:
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+          CGO_ENABLED: "0"
+        run: go build -trimpath -ldflags "-s -w" -o dist/telaremota-hub-linux-${{ matrix.arch }} ./cmd/telaremota-hub
+      - uses: actions/upload-artifact@v4
+        with:
+          name: telaremota-hub-linux-${{ matrix.arch }}
+          path: dist/telaremota-hub-linux-${{ matrix.arch }}

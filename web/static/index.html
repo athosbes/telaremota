@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>TelaRemota</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="home">
+  <div class="card">
+    <div class="brand">
+      <img src="icon.svg" alt="" width="36" height="36">
+      <h1>TelaRemota</h1>
+    </div>
+    <p class="sub">Acesse um computador à distância com conexão direta e criptografada.</p>
+    <form id="form" autocomplete="off">
+      <label for="id">ID do computador</label>
+      <input id="id" inputmode="numeric" placeholder="123 456 789" maxlength="13" required>
+      <label for="pw">Senha</label>
+      <input id="pw" type="password" placeholder="xxx-xxx-xxx" required>
+      <button type="submit" id="go">Conectar</button>
+    </form>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <ul class="facts">
+      <li>Tela e comandos trafegam ponto a ponto, criptografados (DTLS).</li>
+      <li>A senha nunca sai do seu navegador — só uma prova criptográfica.</li>
+    </ul>
+  </div>
+</main>
+
+<section id="session" hidden>
+  <header class="bar">
+    <span class="dot" aria-hidden="true"></span>
+    <strong id="peer"></strong>
+    <span id="route" class="pill"></span>
+    <span id="stats" class="muted"></span>
+    <span class="spacer"></span>
+    <label class="muted" for="quality">Qualidade</label>
+    <select id="quality">
+      <option value="40">Baixa</option>
+      <option value="60" selected>Média</option>
+      <option value="80">Alta</option>
+      <option value="92">Máxima</option>
+    </select>
+    <button id="fit" type="button" title="Alternar entre ajustar à janela e tamanho real">Ajustar</button>
+    <button id="fs" type="button">Tela cheia</button>
+    <button id="end" type="button" class="danger">Desconectar</button>
+  </header>
+  <div id="stage"><canvas id="screen" tabindex="0"></canvas></div>
+  <div id="toast" class="toast" hidden></div>
+</section>
+<script src="app.js"></script>
+</body>
+</html>
