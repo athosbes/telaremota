@@ -4,6 +4,8 @@ Todas as mudanças relevantes do TelaRemota. O formato segue o [Keep a Changelog
 
 ## [Não publicado]
 
+## [0.5.1] - 2026-11-19
+
 ### Adicionado
 
 - Ao instalar o serviço, o TelaRemota cria o atalho no menu Iniciar e aparece em *Configurações → Aplicativos instalados*, de onde é desinstalado.
@@ -29,5 +31,6 @@ Primeira versão pública.
 - Ponto fixo opcional em servidor Linux (amd64 e arm64), com administração remota.
 - Abertura automática da porta no roteador (UPnP) e suporte a IPv6.
 
-[Não publicado]: https://github.com/athosbes/telaremota/compare/v0.5.0...HEAD
+[Não publicado]: https://github.com/athosbes/telaremota/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/athosbes/telaremota/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/athosbes/telaremota/releases/tag/v0.5.0
