@@ -4,6 +4,14 @@ Todas as mudanças relevantes do TelaRemota. O formato segue o [Keep a Changelog
 
 ## [Não publicado]
 
+### Adicionado
+
+- Ícone embutido no `telaremota.exe` (Explorer, atalhos, barra de tarefas fixada) e detalhes do arquivo (descrição, produto, copyright) em Propriedades e no Gerenciador de Tarefas.
+
+### Alterado
+
+- Ícone redesenhado para ficar legível em 16 px: tela maior e seta mais grossa. As janelas usam o tamanho certo de cada lugar em vez de reduzir o PNG.
+
 ## [0.5.0] - 2026-11-17
 
 Primeira versão pública.

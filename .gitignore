@@ -2,6 +2,7 @@
 dist/
 *.exe
 *.syso
+!cmd/telaremota/rsrc_windows_amd64.syso
 /telaremota-hub
 /telaremota-hub-*
 

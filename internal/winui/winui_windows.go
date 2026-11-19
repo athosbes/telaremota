@@ -223,9 +223,9 @@ func New(title string, w, h int) (*App, error) {
 	a.font = a.Font("Segoe UI", 9, false)
 
 	cursor, _, _ := pLoadCursor.Call(0, 32512)
-	icon := AppIcon()
+	icon, iconSm := AppIcons()
 	cls := u16("TelaRemotaPainel")
-	wc := wndClassEx{WndProc: windows.NewCallback(wndProc), Instance: inst, Cursor: cursor, Icon: icon, IconSm: icon, Background: a.bg, ClassName: cls}
+	wc := wndClassEx{WndProc: windows.NewCallback(wndProc), Instance: inst, Cursor: cursor, Icon: icon, IconSm: iconSm, Background: a.bg, ClassName: cls}
 	wc.Size = uint32(unsafe.Sizeof(wc))
 	pRegisterClassEx.Call(uintptr(unsafe.Pointer(&wc)))
 

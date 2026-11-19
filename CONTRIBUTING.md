@@ -27,6 +27,10 @@ telaremota conectar <nome> -diag 5s
 
 `scripts\teste-tailnet.ps1` faz um teste de ponta a ponta da rede Tailscale embutida (pede uma auth key de teste).
 
+## Ícone
+
+A fonte única é [web/static/icon.svg](web/static/icon.svg). Depois de alterá-lo, rode `bash scripts/icone.sh` (precisa do ImageMagick, do Python e do `windres` do MinGW): ele regenera o `.ico`, o PNG das janelas e o `cmd/telaremota/rsrc_windows_amd64.syso`, que o `go build` embute no executável. Os arquivos gerados vão no commit, então quem só compila não precisa dessas ferramentas.
+
 ## Enviando mudanças
 
 1. Abra uma *issue* antes de mudanças grandes, para combinarmos a abordagem.

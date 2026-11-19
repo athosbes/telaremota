@@ -17,6 +17,8 @@ var (
 	pCreateActCtx      = kernel32.NewProc("CreateActCtxW")
 	pActivateActCtx    = kernel32.NewProc("ActivateActCtx")
 	pCreateIconFromRes = user32.NewProc("CreateIconFromResourceEx")
+	pLoadImage         = user32.NewProc("LoadImageW")
+	pGetSystemMetrics  = user32.NewProc("GetSystemMetrics")
 )
 
 const ccManifest = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -61,18 +63,34 @@ func EnableVisualStyles() {
 }
 
 var (
-	iconOnce sync.Once
-	iconH    uintptr
+	iconOnce       sync.Once
+	iconH, iconSmH uintptr
 )
 
-// AppIcon cria o ícone do aplicativo a partir do PNG embutido.
-func AppIcon() uintptr {
+// AppIcons devolve o ícone grande (barra de tarefas, Alt+Tab) e o pequeno
+// (barra de título) do aplicativo. Usa o .ico embutido no executável
+// (cmd/telaremota/telaremota.ico), que tem cada tamanho desenhado à parte; sem
+// ele (go run, outra arquitetura), cai para o PNG embutido, reduzido pelo Windows.
+func AppIcons() (big, small uintptr) {
 	iconOnce.Do(func() {
-		h, _, _ := pCreateIconFromRes.Call(uintptr(unsafe.Pointer(&iconPNG[0])), uintptr(len(iconPNG)), 1, 0x00030000, 0, 0, 0)
-		if h == 0 {
-			h, _, _ = pLoadIcon.Call(0, 32512)
+		iconH = resourceIcon(11, 12)   // SM_CXICON, SM_CYICON
+		iconSmH = resourceIcon(49, 50) // SM_CXSMICON, SM_CYSMICON
+		if iconH == 0 || iconSmH == 0 {
+			h, _, _ := pCreateIconFromRes.Call(uintptr(unsafe.Pointer(&iconPNG[0])), uintptr(len(iconPNG)), 1, 0x00030000, 0, 0, 0)
+			if h == 0 {
+				h, _, _ = pLoadIcon.Call(0, 32512)
+			}
+			iconH, iconSmH = h, h
 		}
-		iconH = h
 	})
-	return iconH
+	return iconH, iconSmH
+}
+
+// resourceIcon carrega o ícone 1 do executável no tamanho da métrica dada.
+func resourceIcon(mx, my uintptr) uintptr {
+	inst, _, _ := pGetModuleHandle.Call(0)
+	cx, _, _ := pGetSystemMetrics.Call(mx)
+	cy, _, _ := pGetSystemMetrics.Call(my)
+	h, _, _ := pLoadImage.Call(inst, 1, 1, cx, cy, 0) // ícone nº 1, IMAGE_ICON
+	return h
 }

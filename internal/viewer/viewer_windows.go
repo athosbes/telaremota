@@ -113,14 +113,14 @@ func moduleHandle() uintptr {
 func (v *Viewer) createWindow() error {
 	inst := moduleHandle()
 	cursor, _, _ := pLoadCursor.Call(0, idcArrow)
-	icon := winui.AppIcon()
+	icon, iconSm := winui.AppIcons()
 	cls := utf16("TelaRemotaViewer")
 	wc := wndClassEx{
 		WndProc:   windows.NewCallback(wndProc),
 		Instance:  inst,
 		Cursor:    cursor,
 		Icon:      icon,
-		IconSm:    icon,
+		IconSm:    iconSm,
 		ClassName: cls,
 	}
 	wc.Size = uint32(unsafe.Sizeof(wc))
