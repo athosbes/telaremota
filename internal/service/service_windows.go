@@ -24,6 +24,9 @@ import (
 
 const Name = "TelaRemota"
 
+// ErrNotInstalled indica que o serviço não está registrado.
+var ErrNotInstalled = errors.New("serviço não está instalado")
+
 // IsService informa se o processo foi iniciado pelo gerenciador de serviços.
 func IsService() bool {
 	ok, _ := svc.IsWindowsService()
@@ -136,6 +139,9 @@ func Install(dataDir string, firewallPort int) (string, error) {
 	if err := s.Start(); err != nil {
 		return exe, fmt.Errorf("serviço instalado, mas não iniciou: %w", err)
 	}
+	if err := registerApp(exe); err != nil {
+		fmt.Fprintln(os.Stderr, "aviso:", err) // o serviço já está de pé; só o atalho/entrada falharam
+	}
 	return exe, nil
 }
 
@@ -148,7 +154,7 @@ func Uninstall() error {
 	defer m.Disconnect()
 	s, err := m.OpenService(Name)
 	if err != nil {
-		return errors.New("serviço não está instalado")
+		return ErrNotInstalled
 	}
 	defer s.Close()
 	stop(s)

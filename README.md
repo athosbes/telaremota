@@ -47,7 +47,7 @@ Atalhos: `.\build.ps1` (PowerShell) ou `make` geram tudo em `dist/`.
 
 ## Começo rápido
 
-Em todos os cenários: **dê duplo clique em `telaremota.exe`** (pede administrador). O painel tem três abas — *Conectar*, *Este computador* e *Ponto fixo*. Defina uma **senha de acesso** em cada computador (*Este computador → Definir senha*).
+Em todos os cenários: **dê duplo clique em `telaremota.exe`** (pede administrador). Não há instalador: ao **Salvar e iniciar serviço**, o programa se copia para `C:\Program Files\TelaRemota`, cria o atalho **TelaRemota** no menu Iniciar e aparece em *Configurações → Aplicativos instalados*, de onde é desinstalado. O executável baixado pode ser apagado depois. O painel tem três abas — *Conectar*, *Este computador* e *Ponto fixo*. Defina uma **senha de acesso** em cada computador (*Este computador → Definir senha*).
 
 ### (a) Um dos computadores tem IP público (ou UPnP no roteador)
 

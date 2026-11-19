@@ -6,6 +6,8 @@ Todas as mudanças relevantes do TelaRemota. O formato segue o [Keep a Changelog
 
 ### Adicionado
 
+- Ao instalar o serviço, o TelaRemota cria o atalho no menu Iniciar e aparece em *Configurações → Aplicativos instalados*, de onde é desinstalado.
+- Comando `telaremota desinstalar [-apagar-dados] [-silencioso]`: remove serviço, firewall, atalho, entrada e a pasta do programa; pergunta se apaga também a identidade e os pareamentos.
 - Ícone embutido no `telaremota.exe` (Explorer, atalhos, barra de tarefas fixada) e detalhes do arquivo (descrição, produto, copyright) em Propriedades e no Gerenciador de Tarefas.
 
 ### Alterado

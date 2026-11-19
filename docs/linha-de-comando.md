@@ -39,7 +39,8 @@ Com a rede Tailscale embutida, acrescente `-tailnet -tailnet-chave tskey-auth-..
 | `telaremota convite -usos 1 -validade 5m` | Convite mais restrito. |
 | `telaremota parear-local` | (Re)pareia seu usuário ao ponto fixo deste computador. |
 | `telaremota senha [-remover]` | Define ou remove a senha de acesso deste computador. |
-| `telaremota servico remover` | Remove o serviço e a regra de firewall. |
+| `telaremota servico remover` | Remove o serviço e a regra de firewall (o programa continua instalado). |
+| `telaremota desinstalar [-apagar-dados] [-silencioso]` | Remove o programa: serviço, firewall, atalho, entrada em *Aplicativos instalados* e `C:\Program Files\TelaRemota`. A identidade e os pareamentos só são apagados com `-apagar-dados` (ou confirmando na janela). É o que *Configurações → Aplicativos → TelaRemota → Desinstalar* executa. |
 | `telaremota conectar <nome> -diag 5s` | Testa a conexão sem abrir janela (quadros, taxa, latência do primeiro quadro). |
 | `scripts\diagnostico-rede.ps1` | Mostra se o computador tem IP público, CGNAT, IPv6, UPnP e o tipo de NAT. |
 

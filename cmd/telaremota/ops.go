@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
 
@@ -21,6 +23,7 @@ import (
 	"telaremota/internal/identity"
 	"telaremota/internal/service"
 	"telaremota/internal/tailnet"
+	"telaremota/internal/winui"
 	"telaremota/internal/wire"
 )
 
@@ -72,6 +75,58 @@ func pairAll(ctx context.Context, addrIn, code, name string, withMachine bool) (
 	}
 	res.User = cl
 	return res, nil
+}
+
+// cmdUninstall remove o programa: é o que Configurações → Aplicativos
+// instalados chama. Pede elevação sozinho e, aberto sem terminal, confirma por
+// janelas em vez do console.
+func cmdUninstall(args []string) error {
+	fs := flag.NewFlagSet("desinstalar", flag.ExitOnError)
+	silent := fs.Bool("silencioso", false, "sem perguntas (mantém os dados, salvo com -apagar-dados)")
+	wipe := fs.Bool("apagar-dados", false, "apagar também a identidade e os pareamentos deste computador")
+	parse(fs, args)
+
+	gui := ownsConsole() // aberto pelo Windows (Aplicativos instalados), não por um terminal
+	if gui {
+		freeConsole()
+	}
+	if !config.Overridden() && !service.IsElevated() {
+		if !gui {
+			return requireAdmin()
+		}
+		exe, _ := os.Executable()
+		return windows.ShellExecute(0, windows.StringToUTF16Ptr("runas"), windows.StringToUTF16Ptr(exe),
+			windows.StringToUTF16Ptr(strings.Join(append([]string{"desinstalar"}, args...), " ")), nil, windows.SW_SHOWNORMAL)
+	}
+
+	if !*silent && gui {
+		if winui.MessageBox("Desinstalar o TelaRemota deste computador?\n\n"+
+			"O serviço para: este computador deixa de ser acessível e, se for o ponto fixo, os outros não se conectam mais.",
+			"Desinstalar TelaRemota", winui.MBYesNo|winui.MBIconQ) != winui.IDYes {
+			return nil
+		}
+		if !*wipe {
+			*wipe = winui.MessageBox("Apagar também a identidade e os pareamentos deste computador?\n\n"+
+				"Se apagar, será preciso parear de novo ao reinstalar. Se mantiver, reinstalar volta a funcionar como antes.",
+				"Desinstalar TelaRemota", winui.MBYesNo|winui.MBIconQ|0x100) == winui.IDYes // 0x100: "Não" é o padrão
+		}
+	}
+	err := service.UninstallApp(*wipe, config.MachineDir(), config.UserDir())
+	msg := "TelaRemota desinstalado."
+	if !*wipe {
+		msg += " A identidade e os pareamentos continuam em " + config.MachineDir() + "."
+	}
+	switch {
+	case err != nil && gui:
+		winui.MessageBox("Não foi possível desinstalar: "+err.Error(), "Desinstalar TelaRemota", winui.MBIconErr)
+	case err != nil:
+		return err
+	case gui && !*silent:
+		winui.MessageBox(msg, "Desinstalar TelaRemota", winui.MBIconInfo)
+	case !gui:
+		fmt.Println(msg)
+	}
+	return nil
 }
 
 // installService valida, grava machine.json e instala/reinicia o serviço.

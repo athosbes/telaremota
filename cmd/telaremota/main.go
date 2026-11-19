@@ -66,7 +66,8 @@ USO
 OUTROS
   telaremota ponto-fixo [-agente]        roda o ponto fixo em primeiro plano (teste)
   telaremota agente                      roda o agente em primeiro plano (teste)
-  telaremota servico remover
+  telaremota servico remover             remove só o serviço (o programa continua instalado)
+  telaremota desinstalar [-apagar-dados] remove o programa (também em Configurações → Aplicativos)
 
 REDE TAILSCALE EMBUTIDA (sem instalar o Tailscale)
   telaremota servico instalar ... -tailnet -tailnet-chave tskey-auth-...
@@ -81,6 +82,7 @@ func main() {
 	screen.SetDPIAware()
 	windows.SetConsoleOutputCP(65001)
 	log.SetFlags(log.Ldate | log.Ltime)
+	service.Version = version
 
 	if service.IsService() {
 		runService()
@@ -131,6 +133,8 @@ func main() {
 		err = cmdService(args)
 	case "auxiliar":
 		err = cmdHelper(args)
+	case "desinstalar":
+		err = cmdUninstall(args)
 	case "ajuda", "-h", "--help", "help":
 		fmt.Printf(usage, version, config.DefaultPort)
 	default:
